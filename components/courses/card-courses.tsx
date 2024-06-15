@@ -27,7 +27,7 @@ export function CardCourse({ course }: CardCoursesProps) {
         <Card className="w-[350px]">
             <CardHeader>
                 <Image
-                    src={course.teacher.flayer}
+                    src={course.facilitator.flayer}
                     alt="Flayer"
                     width={350}
                     height={200}
@@ -44,7 +44,7 @@ export function CardCourse({ course }: CardCoursesProps) {
                         <NavigationMenuItem>
                             <NavigationMenuTrigger>Redes</NavigationMenuTrigger>
                             <NavigationMenuContent className="w-[150px] p-2 space-y-2">
-                                {course.teacher.social.map((social, index) => (
+                                {course.facilitator.social.map((social, index) => (
                                     <NavigationMenuLink key={index} href={social.url} className="flex space-x-2 hover:bg-gray-100">
                                         <social.icon />
                                         <p>{social.name}</p>

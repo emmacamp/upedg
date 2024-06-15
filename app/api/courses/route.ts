@@ -8,7 +8,7 @@ const allCourses: Course[] = [
     description:
       "Aprende a editar videos con Adobe Premiere Pro y After Effects.",
     completed: false,
-    teacher: {
+    facilitator: {
       name: "Jean Carlos",
       flayer: "/path/to/jeanCourseFlayer.jpg",
       social: [
@@ -50,7 +50,7 @@ const allCourses: Course[] = [
     description:
       "Aprende a editar videos con Adobe Premiere Pro y After Effects.",
     completed: false,
-    teacher: {
+    facilitator: {
       name: "Jean Carlos",
       flayer: "/path/to/jeanCourseFlayer.jpg",
       social: [
@@ -92,7 +92,7 @@ const allCourses: Course[] = [
     description:
       "Aprende a editar videos con Adobe Premiere Pro y After Effects.",
     completed: false,
-    teacher: {
+    facilitator: {
       name: "Jean Carlos",
       flayer: "/path/to/jeanCourseFlayer.jpg",
       social: [

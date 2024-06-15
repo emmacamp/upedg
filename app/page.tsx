@@ -6,43 +6,67 @@ export default function Home() {
 
   const courses: Course[] = [
     {
-      course: "Diseño Gráfico",
+      course_title: "Diseño Gráfico",
       facilitator: "Ezequiel Silva",
-      description: "Curso de diseño gráfico",
-      image: "https://xsgames.co/randomusers/avatar.php?g=pixel"
+      course_description: "Curso de diseño gráfico",
+      course_flayer: "https://xsgames.co/randomusers/avatar.php?g=male",
+      meeting: {
+        url: "https://meet.google.com/xyz-abc-def",
+        datetime: "20240814T120000Z",
+        details: "Aprende+a+editar+videos+con+Adobe+Premiere+Pro+y+After+Effects.%0AReunión+en+Google+Meet:"
+      }
     },
     {
-      course: "Adobe Illustrator",
+      course_title: "Adobe Illustrator",
       facilitator: "Ezequiel Silva",
-      description: "Curso de Adobe Illustrator",
-      image: "https://xsgames.co/randomusers/avatar.php?g=female"
+      course_description: "Curso de Adobe Illustrator",
+      course_flayer: "https://xsgames.co/randomusers/avatar.php?g=pixel",
+      meeting: {
+        url: "https://meet.google.com/xyz-abc-def",
+        datetime: "20240814T120000Z",
+        details: "Aprende+a+editar+videos+con+Adobe+Premiere+Pro+y+After+Effects.%0AReunión+en+Google+Meet:"
+      }
     },
     {
-      course: "Adobe Photoshop",
+      course_title: "Adobe Photoshop",
       facilitator: "Ezequiel Silva",
-      description: "Curso de Adobe Photoshop",
-      image: "https://xsgames.co/randomusers/avatar.php?g=male"
-    },
-    {
-      course: "Adobe InDesign",
-      facilitator: "Ezequiel Silva",
-      description: "Curso de Adobe InDesign",
-      image: "https://xsgames.co/randomusers/avatar.php?g=pixel"
-    },
+      course_description: "Curso de Adobe Photoshop",
+      course_flayer: "https://xsgames.co/randomusers/avatar.php?g=male",
+      meeting: {
+        url: "https://meet.google.com/xyz-abc-def",
+        datetime: "20240814T120000Z",
+        details: "Aprende+a+editar+videos+con+Adobe+Premiere+Pro+y+After+Effects.%0AReunión+en+Google+Meet:"
+      }
+    }
   ]
 
   const facilitators: Facilitator[] = [
     {
-      name: "Ezequiel Silva",
-      role: "Facilitador",
-      skills: ["Illustrator", "Photoshop", "InDesign", "Figma", "Web"],
-      image: "https://xsgames.co/randomusers/avatar.php?g=male"
+      facilitator_name: "Ezequiel Silva",
+      facilitator_role: "Facilitador",
+      facilitator_skills: ["Illustrator", "Photoshop", "InDesign", "Figma", "Web"],
+      facilitator_image: "https://xsgames.co/randomusers/avatar.php?g=male",
+      facilitator_description: "Ezequiel Silva es un diseñador gráfico con más de 10 años de experiencia en la industria. Ha trabajado en agencias de publicidad y en empresas de diseño de renombre. Actualmente es el director creativo de su propia agencia de diseño.",
+      facilitator_socials: {
+        facebook: "https://www.facebook.com/ezequielsilva",
+        instagram: "https://www.instagram.com/ezequielsilva",
+        linkedin: "https://www.linkedin.com/in/ezequielsilva",
+        mail: "esilva@upedg.edu.do"
+      }
     },
     {
-      name: "Emmanuel Popa",
-      role: "Desarrollador web",
-      skills: ["Web", "VS Code", "Next.js", "UX/UI", "Figma", "React"],
-      image: "https://xsgames.co/randomusers/avatar.php?g=male"
+      facilitator_name: "Emmanuel Popa",
+      facilitator_role: "Desarrollador web",
+      facilitator_skills: ["Web", "VS Code", "Next.js", "UX/UI", "Figma", "React"],
+      facilitator_image: "https://xsgames.co/randomusers/avatar.php?g=male",
+      facilitator_description: "Emmanuel Popa es un desarrollador web con más de 5 años de experiencia en la industria. Ha trabajado en empresas de tecnología y en proyectos de desarrollo web freelance. Actualmente es el director de tecnología de su propia agencia de desarrollo web.",
+      facilitator_socials: {
+        facebook: "https://www.facebook.com/emmanuelpopa",
+        instagram: "https://www.instagram.com/emmanuelpopa",
+        linkedin: "https://www.linkedin.com/in/emmanuelpopa",
+        mail: "epopa@upedg.edu.do"
+      }
+
     }
   ]
 

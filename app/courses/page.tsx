@@ -17,7 +17,7 @@ const course = {
     title: 'Curso de edición de video',
     description: 'Aprende a editar videos con Adobe Premiere Pro y After Effects.',
     completed: false,
-    teacher: {
+    facilitator: {
         name: 'Jean Carlos',
         flayer: jeanCourseFlayer,
         social: [

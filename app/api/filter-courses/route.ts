@@ -8,7 +8,7 @@ const allCourses: Course[] = [
     description:
       "Aprende a editar videos con Adobe Premiere Pro y After Effects.",
     completed: false,
-    teacher: {
+    facilitator: {
       name: "Jean Carlos",
       flayer: "/path/to/jeanCourseFlayer.jpg",
       social: [
@@ -58,7 +58,7 @@ export async function GET(req: NextRequest) {
         (course) =>
           course.title.toLowerCase().includes(query) ||
           course.description.toLowerCase().includes(query) ||
-          course.teacher.name.toLowerCase().includes(query)
+          course.facilitator.name.toLowerCase().includes(query)
       )
     : allCourses;
 
