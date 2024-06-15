@@ -1,33 +1,35 @@
 interface Teacher {
   name: string;
-  flayer: string;
+  role: string;
+  skills: string[];
+  image: string;
   social: Array<{
     name: string;
     url: string;
-    icon: any;
+    icon?: any;
   }>;
 }
 
 interface Meeting {
   url: string;
-  start: string;
-  end: string;
-  action: string;
-  text: string;
-  dates: {
-    start: string;
-    end: string;
-  };
+  // action: string;
+  // text: string;
+  date: string;
+  // dates: {
+  //   start: Date;
+  //   end: Date;
+  // };
   details: string;
-  location: string;
-  sf: boolean;
-  output: string;
+  // location: string;
+  // sf: boolean;
+  // output: string;
 }
 
 interface Course {
+  flayer: File | null;
   title: string;
   description: string;
-  completed: boolean;
+  // completed?: boolean;
   teacher: Teacher;
   meeting: Meeting;
 }

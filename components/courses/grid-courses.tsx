@@ -1,24 +1,10 @@
 'use server'
 
+import { fetchCourses } from "@/lib/data";
 import { CardCourse } from "./card-courses";
 interface GridCoursesProps {
     query: string;
 }
-
-
-async function fetchCourses(query: string): Promise<Course[]> {
-    if (!query) {
-        return [];
-    }
-
-    const res = await fetch(`http://localhost:3000/api/filter-courses?query=${query}`, {
-        cache: 'no-store'
-    });
-    const courses = await res.json();
-
-    return courses;
-}
-
 
 export async function GridCourses({ query }: GridCoursesProps) {
     const courses = await fetchCourses(query);
