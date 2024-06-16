@@ -4,9 +4,9 @@ const nextConfig = {
         remotePatterns: [
             {
                 protocol: 'https',
-                hostname: 'randomuser.me',
+                hostname: 'res.cloudinary.com',
                 port: '',
-                pathname: '/api/**',
+                pathname: '/**',
             },
             //https://xsgames.co/randomusers/avatar.php?g=pixel
             {

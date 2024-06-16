@@ -1,5 +1,4 @@
 'use client';
-
 import { Button } from "@/components/ui/button";
 import {
     Card,
@@ -10,24 +9,29 @@ import {
     CardTitle,
 } from "@/components/ui/card";
 import Image from "next/image";
-import { MailIcon } from "lucide-react";
-import Link from "next/link";
-import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger } from "../ui/navigation-menu";
-
-
+import { Facebook, Instagram, Linkedin, MailIcon } from 'lucide-react';
+import {
+    NavigationMenu,
+    NavigationMenuContent,
+    NavigationMenuItem,
+    NavigationMenuLink,
+    NavigationMenuList,
+    NavigationMenuTrigger,
+} from "@/components/ui/navigation-menu";
 
 interface CardCoursesProps {
-    course: Course;
+    course: CourseDB;
 }
 
 export function CardCourse({ course }: CardCoursesProps) {
-    const googleCalendarUrl = `https://www.google.com/calendar/render?action=${course.meeting.action}&text=${course.meeting.text}&dates=${course.meeting.dates.start}/${course.meeting.dates.end}&details=${course.meeting.details}${course.meeting.url}&location=${encodeURIComponent(course.meeting.url)}&sf=${course.meeting.sf}&output=${course.meeting.output}`;
+    console.log({ course });
+    const googleCalendarUrl = `https://www.google.com/calendar/render?action=TEMPLATE&text=${course.course_title}&dates=${course.meeting.datetime}/${course.meeting.datetime}&details=${course.meeting.details}&location=${encodeURIComponent(course.meeting.url)}&sf=true&output=xml`;
 
     return (
         <Card className="w-[350px]">
             <CardHeader>
                 <Image
-                    src={course.facilitator.flayer}
+                    src={course.course_flayer as string}
                     alt="Flayer"
                     width={350}
                     height={200}
@@ -35,8 +39,8 @@ export function CardCourse({ course }: CardCoursesProps) {
                 />
             </CardHeader>
             <CardContent>
-                <CardTitle>{course.title}</CardTitle>
-                <CardDescription>{course.description}</CardDescription>
+                <CardTitle>{course.course_title}</CardTitle>
+                <CardDescription>{course.course_description}</CardDescription>
             </CardContent>
             <CardFooter className="flex justify-between">
                 <NavigationMenu className="border rounded-md">
@@ -44,12 +48,18 @@ export function CardCourse({ course }: CardCoursesProps) {
                         <NavigationMenuItem>
                             <NavigationMenuTrigger>Redes</NavigationMenuTrigger>
                             <NavigationMenuContent className="w-[150px] p-2 space-y-2">
-                                {course.facilitator.social.map((social, index) => (
-                                    <NavigationMenuLink key={index} href={social.url} className="flex space-x-2 hover:bg-gray-100">
-                                        <social.icon />
-                                        <p>{social.name}</p>
-                                    </NavigationMenuLink>
-                                ))}
+                                <NavigationMenuLink href={course.facilitator.facilitator_socials.instagram} className="flex space-x-2 hover:bg-gray-100">
+                                    <Instagram />
+                                    <p>Instagram</p>
+                                </NavigationMenuLink>
+                                <NavigationMenuLink href={course.facilitator.facilitator_socials.facebook} className="flex space-x-2 hover:bg-gray-100">
+                                    <Facebook />
+                                    <p>Facebook</p>
+                                </NavigationMenuLink>
+                                <NavigationMenuLink href={course.facilitator.facilitator_socials.linkedin} className="flex space-x-2 hover:bg-gray-100">
+                                    <Linkedin />
+                                    <p>Linkedin</p>
+                                </NavigationMenuLink>
                             </NavigationMenuContent>
                         </NavigationMenuItem>
                     </NavigationMenuList>

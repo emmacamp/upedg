@@ -1,6 +1,8 @@
 "use server";
 
-export async function fetchCourses(query: string): Promise<Course<Facilitator[]>> {
+export async function fetchCourses(
+  query: string
+): Promise<CoursePrismaResponse | CoursePrismaResponse[]> {
   if (!query) {
     return await fetch("http://localhost:3000/api/courses", {
       cache: "no-store",

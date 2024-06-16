@@ -56,7 +56,7 @@ export async function createCourse(formData: FormData): Promise<any> {
 
   try {
     // prisma create course
-    await prisma.course.create({
+    const course = await prisma.course.create({
       data: {
         course_title,
         course_description,
@@ -87,6 +87,8 @@ export async function createCourse(formData: FormData): Promise<any> {
         },
       },
     });
+
+    console.log(course);
 
     return "Course created successfully!";
   } catch (error) {
