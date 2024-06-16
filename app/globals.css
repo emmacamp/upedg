@@ -6,7 +6,7 @@
 input:required {} 
 */
 
-label.required::after {
+label.requird-label-input::after {
   content: " *";
   color: red;
 }
