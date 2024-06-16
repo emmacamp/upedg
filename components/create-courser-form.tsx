@@ -1,5 +1,4 @@
 'use client';
-import { useState, useReducer } from 'react';
 import axios from 'axios';
 import { Button } from "@/components/ui/button";
 import {
@@ -22,121 +21,10 @@ import { Textarea } from './ui/textarea';
 import { CloudFog, Facebook, Instagram, Linkedin, Loader, MagnetIcon } from 'lucide-react';
 import { useFormStatus } from 'react-dom';
 import { toast } from 'sonner';
-
-
-const initialStateForm: Course = {
-    course_title: '',
-    course_description: '',
-    course_flayer: null,
-    facilitator: {
-        facilitator_name: '',
-        facilitator_role: '',
-        facilitator_skills: [],
-        facilitator_description: '',
-        facilitator_image: null,
-        facilitator_socials: {
-            instagram: '',
-            facebook: '',
-            linkedin: '',
-            mail: '',
-        }
-    },
-    meeting: {
-        url: '',
-        datetime: '',
-        details: '',
-    },
-};
-
-type ActionType =
-    | { type: 'SET_FIELD'; payload: { name: string; value: any } }
-    | { type: 'SET_facilitator_FIELD'; payload: { name: string; value: any } }
-    | { type: 'SET_facilitator_SOCIAL'; payload: { name: string; value: any } }
-    | { type: 'SET_MEETING_FIELD'; payload: { name: string; value: any } }
-    | { type: 'RESET_FORM' };
-
-function reducer(state: Course, action: ActionType): Course {
-    switch (action.type) {
-        case 'SET_FIELD':
-            return {
-                ...state,
-                [action.payload.name]: action.payload.value,
-            };
-        case 'SET_facilitator_FIELD':
-            return {
-                ...state,
-                facilitator: {
-                    ...state.facilitator,
-                    [action.payload.name]: action.payload.value,
-                },
-            };
-        case 'SET_facilitator_SOCIAL':
-            return {
-                ...state,
-                facilitator: {
-                    ...state.facilitator,
-                    facilitator_socials: {
-                        ...state.facilitator.facilitator_socials,
-                        [action.payload.name]: action.payload.value,
-                    },
-                },
-            };
-        case 'SET_MEETING_FIELD':
-            return {
-                ...state,
-                meeting: {
-                    ...state.meeting,
-                    [action.payload.name]: action.payload.value,
-                },
-            };
-        case 'RESET_FORM':
-            return initialStateForm;
-        default:
-            return state;
-    }
-}
+import { useContextForm } from '@/app/context/FormContext';
 
 export function CreateCourseForm() {
-    const [form, dispatch] = useReducer(reducer, initialStateForm);
-
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, field: string) => {
-        if (e.target.files && e.target.files[0]) {
-            const file = e.target.files[0];
-            dispatch({ type: 'SET_FIELD', payload: { name: field, value: file } });
-        }
-    };
-
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        const { name, value } = e.target;
-        dispatch({ type: 'SET_FIELD', payload: { name, value } });
-    };
-
-    const handlefacilitatorChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        const { name, value } = e.target;
-        dispatch({ type: 'SET_facilitator_FIELD', payload: { name, value } });
-    };
-
-    const handlefacilitatorSkillsChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        const { value } = e.target;
-        const skills = value.split(',').map(skill => skill.trim());
-        dispatch({ type: 'SET_facilitator_FIELD', payload: { name: 'facilitator_skills', value: skills } });
-    };
-
-    const handleSocialfacilitatorChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        const { name, value } = e.target;
-        dispatch({ type: 'SET_facilitator_SOCIAL', payload: { name, value } });
-    };
-
-    const handleMeetingChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        const { name, value } = e.target;
-        dispatch({ type: 'SET_MEETING_FIELD', payload: { name, value } });
-    };
-
-    const handleDateMeetingChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { value } = e.target;
-        const date = new Date(value).toISOString();
-        dispatch({ type: 'SET_MEETING_FIELD', payload: { name: 'datetime', value: date } });
-    };
+    const { state: form, handleChange, handleDateMeetingChange, handleFileChange, handleMeetingChange, handleSocialfacilitatorChange, handlefacilitatorChange, handlefacilitatorSkillsChange } = useContextForm();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -145,6 +33,8 @@ export function CreateCourseForm() {
         const requiredFields = [
             'course_title',
             'course_description',
+            'course_flayer',
+            'facilitator.facilitator_image',
             'facilitator.facilitator_name',
             'facilitator.facilitator_role',
             'facilitator.facilitator_description',
@@ -154,20 +44,22 @@ export function CreateCourseForm() {
         ];
 
         const missingFields = requiredFields.filter(field => {
+
             const fieldParts = field.split('.');
             if (fieldParts.length > 1) {
                 // @ts-ignore
-                return !form[fieldParts[0]][fieldParts[1]] 
+                return !form[fieldParts[0]][fieldParts[1]]
             }
             // @ts-ignore
             return !form[field];
         });
 
         if (missingFields.length > 0) {
+            console.log(missingFields);
             toast.error('Por favor, complete todos los campos requeridos.');
             return;
         }
-
+        
         const formData = new FormData();
         formData.append('course_title', form.course_title);
         formData.append('course_description', form.course_description);
@@ -180,9 +72,10 @@ export function CreateCourseForm() {
         formData.append('facilitator_socials', JSON.stringify(form.facilitator.facilitator_socials));
         formData.append('meeting', JSON.stringify(form.meeting));
 
+        // console.log({ missingFields, form: Object.fromEntries(formData.entries()) });
         // console.log(Object.fromEntries(formData.entries()));
         // Aquí se puede enviar formData al servidor.
-        await axios.post('http://localhost:3000/admin/create-course', formData);
+        await axios.post('/api/courses/create-course', formData);
 
     };
 
@@ -389,7 +282,7 @@ export function CreateCourseForm() {
                             </div>
                         </CardContent>
                         <CardFooter>
-                            <Button type="submit">Crear Curso</Button>
+                            <CreateCourseButton formInputRequiredEmpty/>
                         </CardFooter>
                     </Card>
                 </TabsContent>
@@ -408,7 +301,7 @@ const CreateCourseButton = ({ formInputRequiredEmpty }: { formInputRequiredEmpty
         <Button disabled={isDisabled} type="submit" className="w-[350px]">
             Crear Curso
             {
-                pending && <Loader className="ml-2" size={20} />
+                isDisabled && <Loader className="ml-2" size={20} />
             }
         </Button>
     );

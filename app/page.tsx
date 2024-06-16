@@ -4,7 +4,7 @@ import { CousesCard, CousesCarouselMobile,  FacilitatorsCard,  FacilitatorsCarou
 
 export default function Home() {
 
-  const courses: Course[] = [
+  const courses: Course<string>[] = [
     {
       course_title: "Diseño Gráfico",
       facilitator: "Ezequiel Silva",

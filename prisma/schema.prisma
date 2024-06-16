@@ -9,3 +9,47 @@ datasource db {
   provider = "sqlite"
   url      = env("DATABASE_URL")
 }
+
+model Course {
+  id                 Int         @id @default(autoincrement())
+  course_title       String
+  course_description String
+  course_flayer      String
+  facilitator        Facilitator @relation(fields: [facilitatorId], references: [id])
+  facilitatorId      Int
+  meeting            Meeting     @relation(fields: [meetingId], references: [id])
+  meetingId          Int
+  createdAt          DateTime    @default(now())
+  updatedAt          DateTime    @updatedAt
+}
+
+model Facilitator {
+  id                      Int                @id @default(autoincrement())
+  facilitator_name        String
+  facilitator_role        String
+  facilitator_skills      String
+  facilitator_description String
+  facilitator_image       String
+  facilitator_socials     FacilitatorSocials @relation(fields: [facilitatorSocialsId], references: [id])
+  facilitatorSocialsId    Int
+  courses                 Course[]
+}
+
+model FacilitatorSocials {
+  id          Int           @id @default(autoincrement())
+  instagram   String
+  facebook    String
+  linkedin    String
+  mail        String
+  Facilitator Facilitator[]
+}
+
+model Meeting {
+  id        Int      @id @default(autoincrement())
+  url       String
+  datetime  DateTime
+  details   String
+  courses   Course[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

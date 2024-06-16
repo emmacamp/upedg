@@ -12,7 +12,7 @@ import Image from "next/image"
 
 
 
-export function CousesCard({ courses }: { courses: Course[] }) {
+export function CousesCard({ courses }: { courses: Course<string>[] }) {
     return (
         <Carousel className="w-full max-w-sm hidden md:block">
             <CarouselContent className="-ml-1">
@@ -95,7 +95,7 @@ export function FacilitatorsCard({ facilitators }: { facilitators: Facilitator[]
 }
 
 
-export function CousesCarouselMobile({ courses }: { courses: Course[] }) {
+export function CousesCarouselMobile({ courses }: { courses: Course<string>[] }) {
     return (
         <Carousel className="w-full max-w-sm md:hidden">
             <CarouselContent className="-ml-1">
