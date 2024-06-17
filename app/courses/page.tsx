@@ -89,7 +89,7 @@ export default function CoursesPage({ searchParams }: SearchParams) {
                 <h2 className="text-xl font-bold w-fit mb-3 border-b-2 border-primary">Impartidos</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     <Suspense key={query} fallback={<CardsSkeleton />}>
-                    <GridCourses query={query} />
+                        <GridCourses query={query} />
                     </Suspense>
                 </div>
             </section>

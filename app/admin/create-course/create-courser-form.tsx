@@ -25,7 +25,23 @@ import { createCourse } from "@/lib/actions";
 import { Facebook, Instagram, Linkedin, MailIcon } from 'lucide-react';
 import Image from "next/image";
 import { toast } from "sonner";
+import { Select } from "@/components/ui/select";
+import { SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Check, ChevronsUpDown } from "lucide-react"
 
+import { cn } from "@/lib/utils"
+import {
+    Command,
+    CommandEmpty,
+    CommandGroup,
+    CommandInput,
+    CommandItem,
+} from "@/components/ui/command"
+import {
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+} from "@/components/ui/popover"
 
 
 const initialState = {
@@ -47,12 +63,16 @@ const initialState = {
 };
 
 
-export default function CreateCourseForm() {
+export default function CreateCourseForm({ facilitators }: { facilitators: FacilitatorDB[] }) {
     const [formState, setFormState] = useState(initialState);
+    const [newFacilitator, setNewFacilitator] = useState(false);
+    const [open, setOpen] = useState(false)
+    const [value, setValue] = useState("")
 
     useEffect(() => {
         console.log(formState);
-    }, [formState]);
+        console.log({ value });
+    }, [value, formState]);
 
 
 
@@ -132,7 +152,7 @@ export default function CreateCourseForm() {
                             <div className="space-y-1">
                                 <Label htmlFor="course_title" className='requird-label-input'>Título del Curso</Label>
                                 <Input
-                                    
+
                                     id="course_title"
                                     name="course_title"
                                     placeholder='Curso de ...'
@@ -143,7 +163,7 @@ export default function CreateCourseForm() {
                             <div className="space-y-1">
                                 <Label htmlFor="course_description" className='requird-label-input'>Descripción del Curso</Label>
                                 <Textarea
-                                    
+
                                     id="course_description"
                                     name="course_description"
                                     placeholder='Aprende a ...'
@@ -155,7 +175,7 @@ export default function CreateCourseForm() {
                                 <Label htmlFor="course_flayer" className='requird-label-input'>Flyer del Curso</Label>
                                 <div className="flex">
                                     <Input
-                                        
+
                                         id="course_flayer"
                                         name='course_flayer'
                                         type="file"
@@ -179,129 +199,221 @@ export default function CreateCourseForm() {
                     </Card>
                 </TabsContent>
                 <TabsContent value="facilitador">
-                    <Card>
-                        <CardHeader>
-                            <CardTitle>Información del Facilitador</CardTitle>
-                            <CardDescription>Ingrese la información del facilitador.</CardDescription>
-                        </CardHeader>
-                        <CardContent className="space-y-2">
-                            <div className="space-y-1">
-                                <Label htmlFor="facilitator_name" className='requird-label-input'>Nombre del Facilitador</Label>
-                                <Input
-                                    
-                                    id="facilitator_name"
-                                    name="facilitator_name"
-                                    value={formState.facilitator_name}
-                                    onChange={handleChange}
-                                />
-                            </div>
-                            <div className="space-y-1">
-                                <Label htmlFor="facilitator_role" className='requird-label-input'>Rol</Label>
-                                <Input
-                                    
-                                    id="facilitator_role"
-                                    name="facilitator_role"
-                                    placeholder="Filmmaker"
-                                    value={formState.facilitator_role}
-                                    onChange={handleChange}
-                                />
-                            </div>
-                            <div className="space-y-1">
-                                <Label htmlFor="facilitator_skills" className='requird-label-input'>Habilidades</Label>
-                                <Input
-                                    
-                                    id="facilitator_skills"
-                                    name="facilitator_skills"
-                                    placeholder='web, photoshop, figma...'
-                                    value={formState.facilitator_skills}
-                                    onChange={handleChange}
-                                />
-                            </div>
-                            <div className="space-y-1">
-                                <Label htmlFor="facilitator_description" className='requird-label-input'>Descripción del Facilitador</Label>
-                                <Textarea
-                                    
-                                    id="facilitator_description"
-                                    name="facilitator_description"
-                                    value={formState.facilitator_description}
-                                    onChange={handleChange}
-                                />
-                            </div>
-                            <div className="space-y-1">
-                                <Label htmlFor="facilitator_image" className='requird-label-input'>Foto del Facilitador</Label>
-                                <div className="flex">
-                                    <Input
-                                        
-                                        id="facilitator_image"
-                                        name="facilitator_image"
-                                        type="file"
-                                        onChange={handleFileChange}
-                                        className="block w-full text-sm text-gray-900 border rounded-lg cursor-pointer bg-gray-50 focus:outline-none border-gray-600"
-                                    />
-                                    {
-                                        formState.facilitator_image && (
-                                            <Image
-                                                src={URL.createObjectURL(formState.facilitator_image)}
-                                                alt="course flayer"
-                                                className="w-[50px] h-[40px]  object-cover rounded-lg ml-2"
-                                                width={40}
-                                                height={40}
-                                            />
-                                        )
-                                    }
-                                </div>
-                            </div>
-                            <div className="space-y-1">
-                                <Label>Redes Sociales</Label>
-                                <div className="relative flex flex-1 flex-shrink-0">
-                                    <Input
-                                        className="peer block w-full rounded-md border border-gray-200 py-[9px] pl-10 text-sm outline-2 placeholder:text-gray-500"
-                                        placeholder="Instagram"
-                                        id='instagram'
-                                        name='instagram'
-                                        value={formState.instagram}
-                                        onChange={handleChange}
-                                    />
-                                    <Instagram className="absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
-                                </div>
+                    <div className="flex items-center mb-2 flex-row-reverse justify-end border border-primary rounded p-3">
+                        <Label htmlFor="new_facilitator">Crear un nuevo facilitador</Label>
+                        <Input
+                            type="checkbox"
+                            id="new_facilitator"
+                            name="new_facilitator"
+                            checked={newFacilitator}
+                            onChange={() => setNewFacilitator(!newFacilitator)}
+                            className="w-5 h-3 text-primary  rounded focus:ring-primary"
+                        />
+                    </div>
+                    {
+                        newFacilitator
+                            ? <Card>
+                                <CardHeader>
+                                    <CardTitle>Información del Facilitador</CardTitle>
+                                    <CardDescription>Ingrese la información del facilitador.</CardDescription>
+                                </CardHeader>
+                                <CardContent className="space-y-2">
+                                    <div className="space-y-1">
+                                        <Label htmlFor="facilitator_name" className='requird-label-input'>Nombre del Facilitador</Label>
+                                        <Input
 
-                                <div className="relative flex flex-1 flex-shrink-0">
-                                    <Input
-                                        className="peer block w-full rounded-md border border-gray-200 py-[9px] pl-10 text-sm outline-2 placeholder:text-gray-500"
-                                        placeholder="Facebook"
-                                        id='facebook'
-                                        name='facebook'
-                                        value={formState.facebook}
-                                        onChange={handleChange}
-                                    />
-                                    <Facebook className="absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
-                                </div>
-                                <div className="relative flex flex-1 flex-shrink-0">
-                                    <Input
-                                        className="peer block w-full rounded-md border border-gray-200 py-[9px] pl-10 text-sm outline-2 placeholder:text-gray-500"
-                                        placeholder="Linkedin"
-                                        id='linkedin'
-                                        name='linkedin'
-                                        value={formState.linkedin}
-                                        onChange={handleChange}
-                                    />
-                                    <Linkedin className="absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
-                                </div>
-                                <div className="relative flex flex-1 flex-shrink-0">
-                                    <Input
-                                        className="peer block w-full rounded-md border border-gray-200 py-[9px] pl-10 text-sm outline-2 placeholder:text-gray-500"
-                                        placeholder="Correo"
-                                        id='mail'
-                                        name='mail'
-                                        type='email'
-                                        value={formState.mail}
-                                        onChange={handleChange}
-                                    />
-                                    <MailIcon className="absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
-                                </div>
-                            </div>
-                        </CardContent>
-                    </Card>
+                                            id="facilitator_name"
+                                            name="facilitator_name"
+                                            value={formState.facilitator_name}
+                                            onChange={handleChange}
+                                        />
+                                    </div>
+                                    <div className="space-y-1">
+                                        <Label htmlFor="facilitator_role" className='requird-label-input'>Rol</Label>
+                                        <Input
+
+                                            id="facilitator_role"
+                                            name="facilitator_role"
+                                            placeholder="Filmmaker"
+                                            value={formState.facilitator_role}
+                                            onChange={handleChange}
+                                        />
+                                    </div>
+                                    <div className="space-y-1">
+                                        <Label htmlFor="facilitator_skills" className='requird-label-input'>Habilidades</Label>
+                                        <Input
+
+                                            id="facilitator_skills"
+                                            name="facilitator_skills"
+                                            placeholder='web, photoshop, figma...'
+                                            value={formState.facilitator_skills}
+                                            onChange={handleChange}
+                                        />
+                                    </div>
+                                    <div className="space-y-1">
+                                        <Label htmlFor="facilitator_description" className='requird-label-input'>Descripción del Facilitador</Label>
+                                        <Textarea
+
+                                            id="facilitator_description"
+                                            name="facilitator_description"
+                                            value={formState.facilitator_description}
+                                            onChange={handleChange}
+                                        />
+                                    </div>
+                                    <div className="space-y-1">
+                                        <Label htmlFor="facilitator_image" className='requird-label-input'>Foto del Facilitador</Label>
+                                        <div className="flex">
+                                            <Input
+
+                                                id="facilitator_image"
+                                                name="facilitator_image"
+                                                type="file"
+                                                onChange={handleFileChange}
+                                                className="block w-full text-sm text-gray-900 border rounded-lg cursor-pointer bg-gray-50 focus:outline-none border-gray-600"
+                                            />
+                                            {
+                                                formState.facilitator_image && (
+                                                    <Image
+                                                        src={URL.createObjectURL(formState.facilitator_image)}
+                                                        alt="course flayer"
+                                                        className="w-[50px] h-[40px]  object-cover rounded-lg ml-2"
+                                                        width={40}
+                                                        height={40}
+                                                    />
+                                                )
+                                            }
+                                        </div>
+                                    </div>
+                                    <div className="space-y-1">
+                                        <Label>Redes Sociales</Label>
+                                        <div className="relative flex flex-1 flex-shrink-0">
+                                            <Input
+                                                className="peer block w-full rounded-md border border-gray-200 py-[9px] pl-10 text-sm outline-2 placeholder:text-gray-500"
+                                                placeholder="Instagram"
+                                                id='instagram'
+                                                name='instagram'
+                                                value={formState.instagram}
+                                                onChange={handleChange}
+                                            />
+                                            <Instagram className="absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
+                                        </div>
+
+                                        <div className="relative flex flex-1 flex-shrink-0">
+                                            <Input
+                                                className="peer block w-full rounded-md border border-gray-200 py-[9px] pl-10 text-sm outline-2 placeholder:text-gray-500"
+                                                placeholder="Facebook"
+                                                id='facebook'
+                                                name='facebook'
+                                                value={formState.facebook}
+                                                onChange={handleChange}
+                                            />
+                                            <Facebook className="absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
+                                        </div>
+                                        <div className="relative flex flex-1 flex-shrink-0">
+                                            <Input
+                                                className="peer block w-full rounded-md border border-gray-200 py-[9px] pl-10 text-sm outline-2 placeholder:text-gray-500"
+                                                placeholder="Linkedin"
+                                                id='linkedin'
+                                                name='linkedin'
+                                                value={formState.linkedin}
+                                                onChange={handleChange}
+                                            />
+                                            <Linkedin className="absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
+                                        </div>
+                                        <div className="relative flex flex-1 flex-shrink-0">
+                                            <Input
+                                                className="peer block w-full rounded-md border border-gray-200 py-[9px] pl-10 text-sm outline-2 placeholder:text-gray-500"
+                                                placeholder="Correo"
+                                                id='mail'
+                                                name='mail'
+                                                type='email'
+                                                value={formState.mail}
+                                                onChange={handleChange}
+                                            />
+                                            <MailIcon className="absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
+                                        </div>
+                                    </div>
+                                </CardContent>
+                            </Card>
+                            : <Card>
+                                <CardHeader>
+                                    <CardTitle>Seleccionar Facilitador</CardTitle>
+                                    <CardDescription>Seleccione un facilitador existente.</CardDescription>
+                                </CardHeader>
+                                <CardContent className="flex">
+                                    <Popover open={open} onOpenChange={setOpen}>
+                                        <PopoverTrigger asChild>
+                                            <Button
+                                                variant="outline"
+                                                role="combobox"
+                                                aria-expanded={open}
+                                                className="w-full justify-between"
+                                            >
+                                                {
+                                                    value
+                                                        ? facilitators.find((facilitator) => facilitator.facilitator_name === value)?.facilitator_name
+                                                        : "Seleccionar Facilitador"
+                                                }
+                                                <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                                            </Button>
+                                        </PopoverTrigger>
+                                        <PopoverContent className="w-[300px] p-0">
+                                            <Command>
+                                                {
+                                                    facilitators.length > 0
+                                                        ? <CommandInput placeholder="Buscar Facilitador..." />
+                                                        : null
+                                                }
+                                                <CommandEmpty>
+                                                    No se encontraron facilitadores
+                                                </CommandEmpty>
+                                                <CommandGroup>
+                                                  
+                                                    {facilitators.map((facilitator) => (
+                                                        <CommandItem
+                                                            key={facilitator.id}
+                                                            value={facilitator.facilitator_name}
+                                                            onSelect={(currentValue) => {
+                                                                console.log({ currentValue });
+                                                                setValue(currentValue === value ? "" : currentValue)
+                                                                setOpen(false)
+                                                            }}
+                                                        >
+                                                            <Check
+                                                                className={cn(
+                                                                    "mr-2 h-4 w-4",
+                                                                    value === facilitator.facilitator_name ? "opacity-100" : "opacity-0"
+                                                                )}
+                                                            />
+                                                            {facilitator.facilitator_name}
+                                                        </CommandItem>
+                                                    ))}
+                                                </CommandGroup>
+                                            </Command>
+                                        </PopoverContent>
+                                    </Popover>
+
+                                    {/* <Select>
+                                        <SelectTrigger className="w-full">
+                                            <SelectValue placeholder="Facilitadores" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {
+                                                facilitators.map(facilitator => (
+                                                    <SelectItem
+                                                        key={facilitator.id}
+                                                        value={`${facilitator.facilitator_name}`}>
+                                                        {facilitator.facilitator_name}
+                                                    </SelectItem>
+                                                ))
+                                            }
+                                        </SelectContent>
+                                    </Select> */}
+                                </CardContent>
+                            </Card>
+                    }
+
+
                 </TabsContent>
                 <TabsContent value="meeting">
                     <Card>
@@ -313,7 +425,7 @@ export default function CreateCourseForm() {
                             <div className="space-y-1">
                                 <Label htmlFor="url" className='requird-label-input'>URL de la Reunión</Label>
                                 <Input
-                                    
+
                                     id="url"
                                     name="url"
                                     value={formState.url}
@@ -323,7 +435,7 @@ export default function CreateCourseForm() {
                             <div className="space-y-1">
                                 <Label htmlFor="datetime" className='requird-label-input'>Fecha de la Reunión</Label>
                                 <Input
-                                    
+
                                     id="datetime"
                                     name="datetime"
                                     type='datetime-local'
@@ -334,7 +446,7 @@ export default function CreateCourseForm() {
                             <div className="space-y-1">
                                 <Label htmlFor="details" className='requird-label-input'>Detalles</Label>
                                 <Textarea
-                                    
+
                                     id="details"
                                     name="details"
                                     value={formState.details}
@@ -343,7 +455,7 @@ export default function CreateCourseForm() {
                             </div>
                         </CardContent>
                         <CardFooter>
-                            <SubmitButton text="Crear Curso"/>
+                            <SubmitButton text="Crear Curso" />
                         </CardFooter>
                     </Card>
                 </TabsContent>

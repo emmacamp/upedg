@@ -1,7 +1,9 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
 import prisma from "./prisma";
-
+import uploadImageToCloudinary from "@/lib/cloudinary";
+import { v2 as cloudinary } from "cloudinary";
 export async function createCourse(formData: FormData): Promise<any> {
   // ? Course
   const course_title = formData.get("course_title") as string;
@@ -25,74 +27,141 @@ export async function createCourse(formData: FormData): Promise<any> {
   const datetime = formData.get("datetime") as string;
   const details = formData.get("details") as string;
 
+  if (!facilitator_image || !course_flayer) {
+    return "Please upload images!";
+  }
+
+  // convert files to buffer
+  const facilitator_image_buffer = await facilitator_image?.arrayBuffer();
+  const course_flayer_buffer = await course_flayer?.arrayBuffer();
+
+  const bufferFacilitatorImage = new Uint8Array(facilitator_image_buffer);
+  const bufferCourseFlayer = new Uint8Array(course_flayer_buffer);
+
   // upload files to cloudinary
-  //...
-  const course_flayer_url = "https://res.cloudinary.com/...";
-  const facilitator_image_url = "https://res.cloudinary.com/...";
+  const [courseFlayerResult, facilitatorImageResult] = await Promise.all([
+    uploadImageToCloudinary(bufferCourseFlayer),
+    uploadImageToCloudinary(bufferFacilitatorImage),
+  ]);
 
-  const data = {
-    course_title,
-    course_description,
-    course_flayer,
-    facilitator: {
-      facilitator_name,
-      facilitator_role,
-      facilitator_skills,
-      facilitator_description,
-      facilitator_image,
-      facilitator_socials: {
-        instagram,
-        facebook,
-        linkedin,
-        mail,
-      },
-    },
-    meeting: {
-      url,
-      datetime,
-      details,
-    },
-  };
+  console.log({ courseFlayerResult, facilitatorImageResult });
 
-  try {
-    // prisma create course
-    const course = await prisma.course.create({
-      data: {
-        course_title,
-        course_description,
-        course_flayer: course_flayer_url,
-        facilitator: {
-          create: {
-            facilitator_name,
-            facilitator_role,
-            facilitator_skills,
-            facilitator_description,
-            facilitator_image: facilitator_image_url,
-            facilitator_socials: {
-              create: {
-                instagram,
-                facebook,
-                linkedin,
-                mail,
+  if (courseFlayerResult && facilitatorImageResult) {
+    try {
+      // prisma create course
+      const course = await prisma.course.create({
+        data: {
+          course_title,
+          course_description,
+          course_flayer: {
+            create: {
+              // @ts-ignore
+              public_id: courseFlayerResult.public_id,
+              // @ts-ignore
+              secure_url: courseFlayerResult.secure_url,
+            },
+          },
+          facilitator: {
+            create: {
+              facilitator_name,
+              facilitator_role,
+              facilitator_skills,
+              facilitator_description,
+              facilitator_image: {
+                create: {
+                  // @ts-ignore
+                  public_id: facilitatorImageResult.public_id,
+                  // @ts-ignore
+                  secure_url: facilitatorImageResult.secure_url,
+                },
+              },
+              facilitator_socials: {
+                create: {
+                  instagram,
+                  facebook,
+                  linkedin,
+                  mail,
+                },
               },
             },
           },
-        },
-        meeting: {
-          create: {
-            url,
-            datetime: new Date(datetime),
-            details,
+          meeting: {
+            create: {
+              url,
+              datetime: new Date(datetime),
+              details,
+            },
           },
         },
+      });
+
+      console.log({ NewCourse: course });
+      revalidatePath("/courses");
+      return "Course created successfully!";
+    } catch (error) {
+      console.log(error);
+      return "Failed to create course!";
+    }
+  }
+
+  return "Failed to upload images!";
+}
+
+export async function deleteCourse(courseId: string) {
+  try {
+    const course = await prisma.course.findUnique({
+      where: { id: courseId },
+      include: {
+        facilitator: {
+          include: {
+            facilitator_socials: true,
+            facilitator_image: true,
+          },
+        },
+        course_flayer: true,
+        meeting: true,
       },
     });
 
-    console.log(course);
+    if (!course) {
+      throw new Error(`Course with ID ${courseId} not found`);
+    }
 
-    return "Course created successfully!";
+    await prisma.course.delete({ where: { id: courseId } });
+
+    // await prisma.$transaction([
+    //   prisma.course.delete({ where: { id: courseId } }),
+    //   prisma.meeting.delete({ where: { id: course.meetingId } }),
+    //   prisma.facilitatorSocials.delete({
+    //     where: { id: course.facilitator.facilitatorSocialsId },
+    //   }),
+    //   prisma.image.delete({ where: { id: course.courseFlayerId } }),
+    //   prisma.image.delete({
+    //     where: { id: course.facilitator.facilitatorImageId },
+    //   }),
+    //   prisma.facilitator.delete({ where: { id: course.facilitatorId } }),
+    // ]);
+
+    await cloudinary.api
+      .delete_resources(
+        [
+          course.course_flayer.public_id,
+          course.facilitator.facilitator_image.public_id,
+        ],
+        { type: "upload", resource_type: "image" }
+      )
+      .then(console.log);
+
+    revalidatePath("/courses");
+    return {
+      success: true,
+      message: "Course deleted successfully!",
+    };
   } catch (error) {
     console.log(error);
-    return "Failed to create course!";
+    return {
+      success: false,
+      message: "Failed to delete course!",
+    };
   }
 }

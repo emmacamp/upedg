@@ -1,10 +1,12 @@
+import prisma from "@/lib/prisma";
 import CreateCourseForm from "./create-courser-form";
 
-export default function CreateCoursePage() {
+export default async function CreateCoursePage() {
+  const facilitators: FacilitatorDB[] = await prisma.facilitator.findMany();
+
   return (
     <div className="p-4">
-        {/* <h1>Create Course</h1> */}
-      <CreateCourseForm /> 
+      <CreateCourseForm facilitators={facilitators} />
     </div>
   )
 }
