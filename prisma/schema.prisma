@@ -14,7 +14,8 @@ model Course {
   id                 Int         @id @default(autoincrement())
   course_title       String
   course_description String
-  course_flayer      String
+  course_flayer      Flayer      @relation(fields: [courseFlayerId], references: [id])
+  courseFlayerId     Int
   facilitator        Facilitator @relation(fields: [facilitatorId], references: [id])
   facilitatorId      Int
   meeting            Meeting     @relation(fields: [meetingId], references: [id])
@@ -29,10 +30,11 @@ model Facilitator {
   facilitator_role        String
   facilitator_skills      String
   facilitator_description String
-  facilitator_image       String
+  facilitator_image       Image              @relation(fields: [facilitatorImageId], references: [id])
+  facilitatorImageId      Int
   facilitator_socials     FacilitatorSocials @relation(fields: [facilitatorSocialsId], references: [id])
   facilitatorSocialsId    Int
-  courses                 Course[]
+  Course                  Course[]
 }
 
 model FacilitatorSocials {
@@ -52,4 +54,18 @@ model Meeting {
   courses   Course[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model Flayer {
+  id          Int           @id @default(autoincrement())
+  public_id   String
+  secure_url  String
+  Course      Course[]
+}
+
+model Image {
+  id          Int           @id @default(autoincrement())
+  public_id   String
+  secure_url  String
+  Facilitator Facilitator[]
 }

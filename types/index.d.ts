@@ -12,7 +12,7 @@ interface FacilitatorDB {
   facilitator_role: string;
   facilitator_skills: string;
   facilitator_description: string;
-  facilitator_image: string;
+  facilitator_image: ImageDB;
   facilitatorSocialsId: number;
   facilitator_socials: FacilitatorSocialsDB;
 }
@@ -26,11 +26,22 @@ interface MeetingDB {
   updatedAt: Date;
 }
 
+interface ImageDB {
+  id: number;
+  public_id: string;
+  secure_url: string;
+}
+interface FlayerDB {
+  id: number;
+  public_id: string;
+  secure_url: string;
+}
+
 interface CourseDB {
   id: number;
   course_title: string;
   course_description: string;
-  course_flayer: string;
+  course_flayer: FlayerDB;
   facilitatorId: number;
   meetingId: number;
   createdAt: Date;

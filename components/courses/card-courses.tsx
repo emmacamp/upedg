@@ -31,7 +31,7 @@ export function CardCourse({ course }: CardCoursesProps) {
         <Card className="w-[350px]">
             <CardHeader>
                 <Image
-                    src={course.course_flayer as string}
+                    src={course.course_flayer.secure_url}
                     alt="Flayer"
                     width={350}
                     height={200}
