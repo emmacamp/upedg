@@ -1,9 +1,13 @@
 interface FacilitatorDB {
   id: string;
+  id: string;
   facilitator_name: string;
   facilitator_role: string;
   facilitator_skills: string;
   facilitator_description: string;
+  facilitator_image?: ImageDB;
+  facilitatorSocialsId: string;
+  facilitator_socials?: FacilitatorSocialsDB;
   facilitator_image?: ImageDB;
   facilitatorSocialsId: string;
   facilitator_socials?: FacilitatorSocialsDB;
@@ -12,6 +16,7 @@ interface FacilitatorDB {
 }
 
 interface CourseDB {
+  id: string;
   id: string;
   course_title: string;
   course_description: string;

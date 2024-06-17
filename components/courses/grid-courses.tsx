@@ -48,6 +48,7 @@ export async function GridCourses({ query }: GridCoursesProps) {
                 <CardCourse
                     key={course.id}
                     course={course}
+                    course={course}
                 />
             ))}
         </div>
