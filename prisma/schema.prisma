@@ -11,94 +11,60 @@ datasource db {
 }
 
 model Facilitator {
-  id                      String   @id @default(cuid())
+  id                      String                @id @default(cid())
   facilitator_name        String
   facilitator_role        String
   facilitator_skills      String
   facilitator_description String
-
-  // Relation Scalar Fields
-  facilitatorSocials FacilitatorSocials?
-  Image              Image?
-  Course             Course[]
-
-  // Timestamps
-  createdAt               DateTime @default(now())
-  updatedAt               DateTime @updatedAt
-
-  // Modify the name of the table
-  @@map("facilitators")
+  facilitator_image       Image              @relation(fields: [facilitatorImageId], references: [id], onDelete: Cascade)
+  facilitatorImageId      Int
+  facilitator_socials     FacilitatorSocials @relation(fields: [facilitatorSocialsId], references: [id], onDelete: Cascade)
+  facilitatorSocialsId    Int
+  Course                  Course[]
+  createdAt          DateTime    @default(now())
+  updatedAt          DateTime    @updatedAt
 }
-
 model Course {
-  id                 String @id @default(cuid())
+  id                 Int         @id @default(autoincrement())
   course_title       String
   course_description String
-
-  // Relation Scalar Fields
-  facilitatorId String
-
-  // Annotated Relations Fields
-  Meeting     Meeting?
-  Flayer      Flayer?
-  
-  // Relationships
-  Facilitator Facilitator @relation(fields: [facilitatorId], references: [id])
-  
-  // Timestamps
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@map("courses")
-}
-
-model Meeting {
-  id       String   @id @default(cuid())
-  url      String
-  datetime DateTime
-  details  String
-
-  // Relationships
-  course   Course? @relation(fields: [courseId], references: [id])
-  courseId String @unique
-  
-  @@map("meetings")
+  course_flayer      Flayer      @relation(fields: [courseFlayerId], references: [id], onDelete: Cascade)
+  courseFlayerId     Int
+  facilitator        Facilitator @relation(fields: [facilitatorId], references: [id])
+  facilitatorId      Int
+  meeting            Meeting     @relation(fields: [meetingId], references: [id])
+  meetingId          Int
+  createdAt          DateTime    @default(now())
+  updatedAt          DateTime    @updatedAt
 }
 
 model FacilitatorSocials {
-  id        String @id @default(cuid())
-  instagram String 
-  facebook  String 
-  linkedin  String 
-  mail      String 
+  id          Int           @id @default(autoincrement())
+  instagram   String
+  facebook    String
+  linkedin    String
+  mail        String
+  Facilitator Facilitator[]
+}
 
-  // Relationships
-  Facilitator   Facilitator @relation(fields: [facilitatorId], references: [id])
-  facilitatorId String      @unique
-
-  @@map("facilitator_socials")
+model Meeting {
+  id        Int      @id @default(autoincrement())
+  url       String
+  datetime  DateTime
+  details   String
+  courses   Course[]
 }
 
 model Flayer {
-  id         String @id @default(cuid())
-  public_id  String 
-  secure_url String 
-
-  // Relationships
-  Course   Course? @relation(fields: [courseId], references: [id])
-  courseId String @unique
-
-  @@map("flayers")
+  id          Int           @id @default(autoincrement())
+  public_id   String
+  secure_url  String
+  Course      Course[]
 }
 
 model Image {
-  id         String @id @default(cuid())
-  public_id  String 
-  secure_url String 
-
-  // Relationships
-  facilitatorId String @unique
-  Facilitator   Facilitator @relation(fields: [facilitatorId], references: [id])
-
-  @@map("images")
+  id          Int           @id @default(autoincrement())
+  public_id   String
+  secure_url  String
+  Facilitator Facilitator[]
 }

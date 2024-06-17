@@ -11,31 +11,36 @@ interface GridCoursesProps {
 }
 
 export async function GridCourses({ query }: GridCoursesProps) {
-    const courses: CourseDB[] = await prisma.course.findMany({
+    const courses: CourseDB = await prisma.course.findMany({
         where: {
             course_title: {
                 contains: query,
             },
-            course_description: {
-                contains: query,
-            },
-            facilitator: {
-                facilitator_name: {
-                    contains: query,
-                },
-            },
+        //     course_description: {
+        //         contains: query,
+        //     },
+        //     facilitator: {
+        //         facilitator_name: {
+        //             contains: query,
+        //         },
+        //     },
         },
         include: {
-            course_flayer: true,
-            facilitator: {
-                include: {
-                    facilitator_socials: true,
-                    facilitator_image: true,
-                },
-            },
-            meeting: true,
+            Facilitator: true,
+            Meeting: true,
+            Flayer: true,
+            // course_flayer: true,
+            // facilitator: {
+            //     include: {
+            //         facilitator_socials: true,
+            //         facilitator_image: true,
+            //     },
+            // },
+            // meeting: true,
         },
     });
+
+    console.log({ courses });
 
     return (
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
