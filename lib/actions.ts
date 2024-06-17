@@ -1,15 +1,10 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
 import prisma from "./prisma";
 import uploadImageToCloudinary from "@/lib/cloudinary";
-
+import { v2 as cloudinary } from "cloudinary";
 export async function createCourse(formData: FormData): Promise<any> {
-
-  // lower case all values
-  for (var pair of formData.entries()) {
-    formData.set(pair[0], pair[1].toString().toLowerCase());
-  }
-
   // ? Course
   const course_title = formData.get("course_title") as string;
   const course_description = formData.get("course_description") as string;
@@ -32,8 +27,13 @@ export async function createCourse(formData: FormData): Promise<any> {
   const datetime = formData.get("datetime") as string;
   const details = formData.get("details") as string;
 
-  const facilitator_image_buffer = await facilitator_image.arrayBuffer();
-  const course_flayer_buffer = await course_flayer.arrayBuffer();
+  if (!facilitator_image || !course_flayer) {
+    return "Please upload images!";
+  }
+
+  // convert files to buffer
+  const facilitator_image_buffer = await facilitator_image?.arrayBuffer();
+  const course_flayer_buffer = await course_flayer?.arrayBuffer();
 
   const bufferFacilitatorImage = new Uint8Array(facilitator_image_buffer);
   const bufferCourseFlayer = new Uint8Array(course_flayer_buffer);
@@ -55,7 +55,9 @@ export async function createCourse(formData: FormData): Promise<any> {
           course_description,
           course_flayer: {
             create: {
+              // @ts-ignore
               public_id: courseFlayerResult.public_id,
+              // @ts-ignore
               secure_url: courseFlayerResult.secure_url,
             },
           },
@@ -67,7 +69,9 @@ export async function createCourse(formData: FormData): Promise<any> {
               facilitator_description,
               facilitator_image: {
                 create: {
+                  // @ts-ignore
                   public_id: facilitatorImageResult.public_id,
+                  // @ts-ignore
                   secure_url: facilitatorImageResult.secure_url,
                 },
               },
@@ -91,8 +95,8 @@ export async function createCourse(formData: FormData): Promise<any> {
         },
       });
 
-      console.log(course);
-
+      console.log({ NewCourse: course });
+      revalidatePath("/courses");
       return "Course created successfully!";
     } catch (error) {
       console.log(error);
@@ -101,4 +105,63 @@ export async function createCourse(formData: FormData): Promise<any> {
   }
 
   return "Failed to upload images!";
+}
+
+export async function deleteCourse(courseId: string) {
+  try {
+    const course = await prisma.course.findUnique({
+      where: { id: courseId },
+      include: {
+        facilitator: {
+          include: {
+            facilitator_socials: true,
+            facilitator_image: true,
+          },
+        },
+        course_flayer: true,
+        meeting: true,
+      },
+    });
+
+    if (!course) {
+      throw new Error(`Course with ID ${courseId} not found`);
+    }
+
+    await prisma.course.delete({ where: { id: courseId } });
+
+    // await prisma.$transaction([
+    //   prisma.course.delete({ where: { id: courseId } }),
+    //   prisma.meeting.delete({ where: { id: course.meetingId } }),
+    //   prisma.facilitatorSocials.delete({
+    //     where: { id: course.facilitator.facilitatorSocialsId },
+    //   }),
+    //   prisma.image.delete({ where: { id: course.courseFlayerId } }),
+    //   prisma.image.delete({
+    //     where: { id: course.facilitator.facilitatorImageId },
+    //   }),
+    //   prisma.facilitator.delete({ where: { id: course.facilitatorId } }),
+    // ]);
+
+    await cloudinary.api
+      .delete_resources(
+        [
+          course.course_flayer.public_id,
+          course.facilitator.facilitator_image.public_id,
+        ],
+        { type: "upload", resource_type: "image" }
+      )
+      .then(console.log);
+
+    revalidatePath("/courses");
+    return {
+      success: true,
+      message: "Course deleted successfully!",
+    };
+  } catch (error) {
+    console.log(error);
+    return {
+      success: false,
+      message: "Failed to delete course!",
+    };
+  }
 }

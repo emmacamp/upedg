@@ -11,7 +11,7 @@ interface GridCoursesProps {
 }
 
 export async function GridCourses({ query }: GridCoursesProps) {
-    const courses = await prisma.course.findMany({
+    const courses: CourseDB[] = await prisma.course.findMany({
         where: {
             course_title: {
                 contains: query,
@@ -37,14 +37,12 @@ export async function GridCourses({ query }: GridCoursesProps) {
         },
     });
 
-    console.log({ courses });
-
     return (
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
             {courses.map((course) => (
                 <CardCourse
                     key={course.id}
-                    course={course as CourseDB}
+                    course={course}
                 />
             ))}
         </div>
