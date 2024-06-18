@@ -18,31 +18,18 @@ import {
     NavigationMenuList,
     NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
-import { deleteCourse } from "@/lib/actions";
-import { toast } from "sonner";
 
-interface CardCoursesProps {
-    course: Course;
+interface CardFacilitatorsProps {
+    facilitator: Facilitator
 }
 
-export function CardCourse({ course }: CardCoursesProps) {
-    const googleCalendarUrl = `https://www.google.com/calendar/render?action=TEMPLATE&text=${course.course_title}&dates=${course.Meeting.datetime}/${course.Meeting.datetime}&details=${course.Meeting.details}&location=${encodeURIComponent(course.Meeting.url)}&sf=true&output=xml`;
-
-    const handleDelete = async () => {
-        const response = await deleteCourse(course.id);
-        if (response.success) {
-            toast.success(response.message);
-        } else {
-            toast.error(response.message);
-        }
-    };
-
+export function CardFacilitator({ facilitator }: CardFacilitatorsProps) {
 
     return (
         <Card className="max-w-[350px] ">
             <CardHeader>
                 <Image
-                    src={course.course_flayer.secure_url}
+                    src={facilitator.facilitator_image.secure_url}
                     alt="Flayer"
                     width={350}
                     height={200}
@@ -50,8 +37,8 @@ export function CardCourse({ course }: CardCoursesProps) {
                 />
             </CardHeader>
             <CardContent>
-                <CardTitle>{course.course_title}</CardTitle>
-                <CardDescription>{course.course_description}</CardDescription>
+                <CardTitle>{facilitator.facilitator_name}</CardTitle>
+                <CardDescription>{facilitator.facilitator_description}</CardDescription>
             </CardContent>
             <CardFooter className="flex justify-between">
                 <NavigationMenu className="border rounded-md">
@@ -59,15 +46,15 @@ export function CardCourse({ course }: CardCoursesProps) {
                         <NavigationMenuItem>
                             <NavigationMenuTrigger>Redes</NavigationMenuTrigger>
                             <NavigationMenuContent className="w-[150px] p-2 space-y-2">
-                                <NavigationMenuLink href={course.Facilitator.facilitator_socials?.instagram} className="flex space-x-2 hover:bg-gray-100">
+                                <NavigationMenuLink href={facilitator.facilitator_socials?.instagram} className="flex space-x-2 hover:bg-gray-100">
                                     <Instagram />
                                     <p>Instagram</p>
                                 </NavigationMenuLink>
-                                <NavigationMenuLink href={course.Facilitator.facilitator_socials?.instagram} className="flex space-x-2 hover:bg-gray-100">
+                                <NavigationMenuLink href={facilitator.facilitator_socials?.instagram} className="flex space-x-2 hover:bg-gray-100">
                                     <Facebook />
                                     <p>Facebook</p>
                                 </NavigationMenuLink>
-                                <NavigationMenuLink href={course.Facilitator.facilitator_socials?.linkedin} className="flex space-x-2 hover:bg-gray-100">
+                                <NavigationMenuLink href={facilitator.facilitator_socials?.linkedin} className="flex space-x-2 hover:bg-gray-100">
                                     <Linkedin />
                                     <p>Linkedin</p>
                                 </NavigationMenuLink>
@@ -75,12 +62,12 @@ export function CardCourse({ course }: CardCoursesProps) {
                         </NavigationMenuItem>
                     </NavigationMenuList>
                 </NavigationMenu>
-                <a href={googleCalendarUrl} target="_blank" rel="noopener noreferrer">
+                {/* <a href={googleCalendarUrl} target="_blank" rel="noopener noreferrer">
                     <Button>
                         <MailIcon className="mr-2" />
                         Agendar
                     </Button>
-                </a>
+                </a> */}
                 {/* <Button variant="destructive" onClick={handleDelete}>
                     Eliminar
                 </Button> */}

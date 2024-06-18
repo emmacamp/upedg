@@ -26,6 +26,8 @@ import { Facebook, Instagram, Linkedin, MailIcon } from 'lucide-react';
 import Image from "next/image";
 import { toast } from "sonner";
 import { Select } from "@/components/ui/select";
+
+// TODO: Add select for facilitator
 import { SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Check, ChevronsUpDown } from "lucide-react"
 

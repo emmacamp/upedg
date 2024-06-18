@@ -15,7 +15,10 @@ interface Facilitator {
   facilitator_role: string;
   facilitator_skills: string;
   facilitator_socials: FacilitatorSocials;
+  facilitator_image: ImageFile;
   facilitator_description: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 interface FacilitatorSocials {
@@ -39,6 +42,7 @@ interface ImageFile {
   id: string;
   public_id: string;
   secure_url: string;
+  facilitatorId: string;
 }
 
 interface FacilitatorDB {

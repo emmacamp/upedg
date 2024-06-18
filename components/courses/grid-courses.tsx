@@ -48,16 +48,10 @@ export async function GridCourses({ query }: GridCoursesProps) {
         },
     });
 
-    console.log({ Courses: courses });
-
-    return (
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {courses.map((course) => (
-                <CardCourse
-                    key={course.id}
-                    course={course as Course}
-                />
-            ))}
-        </div>
-    );
+    return courses.map((course) => (
+        <CardCourse
+            key={course.id}
+            course={course as Course}
+        />
+    ));
 }
