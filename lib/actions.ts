@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import prisma from "./prisma";
 import uploadImageToCloudinary from "@/lib/cloudinary";
 import { v2 as cloudinary } from "cloudinary";
+
 export async function createCourse(formData: FormData): Promise<any> {
   // ? Course
   const course_title = formData.get("course_title") as string;
@@ -44,7 +45,10 @@ export async function createCourse(formData: FormData): Promise<any> {
     uploadImageToCloudinary(bufferFacilitatorImage),
   ]);
 
-  console.log({ courseFlayerResult, facilitatorImageResult });
+  // console.log({ courseFlayerResult, facilitatorImageResult });
+  if (!courseFlayerResult || !facilitatorImageResult) {
+    return "Failed to upload images!";
+  }
 
   if (courseFlayerResult && facilitatorImageResult) {
     try {
@@ -61,7 +65,7 @@ export async function createCourse(formData: FormData): Promise<any> {
               secure_url: courseFlayerResult.secure_url,
             },
           },
-          facilitator: {
+          Facilitator: {
             create: {
               facilitator_name,
               facilitator_role,
@@ -85,7 +89,7 @@ export async function createCourse(formData: FormData): Promise<any> {
               },
             },
           },
-          meeting: {
+          Meeting: {
             create: {
               url,
               datetime: new Date(datetime),
@@ -95,6 +99,37 @@ export async function createCourse(formData: FormData): Promise<any> {
         },
       });
 
+      // facilitator: {
+      //   create: {
+      //     facilitator_name,
+      //     facilitator_role,
+      //     facilitator_skills,
+      //     facilitator_description,
+      //     facilitator_image: {
+      //       create: {
+      //         // @ts-ignore
+      //         public_id: facilitatorImageResult.public_id,
+      //         // @ts-ignore
+      //         secure_url: facilitatorImageResult.secure_url,
+      //       },
+      //     },
+      //     facilitator_socials: {
+      //       create: {
+      //         instagram,
+      //         facebook,
+      //         linkedin,
+      //         mail,
+      //       },
+      //     },
+      //   },
+      // },
+      // meeting: {
+      //   create: {
+      //     url,
+      //     datetime: new Date(datetime),
+      //     details,
+      //   },
+      // },
       console.log({ NewCourse: course });
       revalidatePath("/courses");
       return "Course created successfully!";

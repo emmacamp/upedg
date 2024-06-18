@@ -11,7 +11,7 @@ datasource db {
 }
 
 model Facilitator {
-  id                      String   @id @default(cuid())
+  id                      String              @id @default(cuid())
   facilitator_name        String
   facilitator_role        String
   facilitator_skills      String
@@ -19,8 +19,10 @@ model Facilitator {
   facilitator_image       Image?
   facilitator_socials     FacilitatorSocials?
   Course                  Course[]
-  createdAt               DateTime @default(now())
-  updatedAt               DateTime @updatedAt
+  createdAt               DateTime            @default(now())
+  updatedAt               DateTime            @updatedAt
+
+  @@map("facilitators")
 }
 
 model Course {
@@ -28,22 +30,26 @@ model Course {
   course_title       String
   course_description String
   course_flayer      Flayer?
-  courseFlayerId     String
   Facilitator        Facilitator @relation(fields: [facilitatorId], references: [id])
   facilitatorId      String
-  Meeting            Meeting[]     
+  Meeting            Meeting     @relation(fields: [meetingId], references: [id])
+  meetingId           String      @unique
   createdAt          DateTime    @default(now())
   updatedAt          DateTime    @updatedAt
+
+  @@map("courses")
 }
 
 model FacilitatorSocials {
-  id          String           @id @default(cuid())
-  instagram   String
-  facebook    String
-  linkedin    String
-  mail        String
-  Facilitator Facilitator?    @relation(fields: [facilitatorId], references: [id])
-  facilitatorId String        @unique
+  id            String       @id @default(cuid())
+  instagram     String
+  facebook      String
+  linkedin      String
+  mail          String
+  Facilitator   Facilitator? @relation(fields: [facilitatorId], references: [id])
+  facilitatorId String       @unique
+
+  @@map("facilitator_socials")
 }
 
 model Meeting {
@@ -51,16 +57,18 @@ model Meeting {
   url      String
   datetime DateTime
   details  String
-  Course   Course   @relation(fields: [courseId], references: [id])
-  courseId String   @unique
+  Course   Course?
+  @@map("meetings")
 }
 
 model Flayer {
-  id         String @id @default(cuid())
+  id         String  @id @default(cuid())
   public_id  String
   secure_url String
-  Course     Course @relation(fields: [courseId], references: [id])
-  courseId   String @unique
+  Course     Course? @relation(fields: [courseId], references: [id])
+  courseId   String  @unique
+
+  @@map("flayers")
 }
 
 model Image {
@@ -69,4 +77,6 @@ model Image {
   secure_url    String
   Facilitator   Facilitator? @relation(fields: [facilitatorId], references: [id])
   facilitatorId String       @unique
+
+  @@map("images")
 }

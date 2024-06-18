@@ -11,7 +11,7 @@ interface GridCoursesProps {
 }
 
 export async function GridCourses({ query }: GridCoursesProps) {
-    const courses: CourseDB = await prisma.course.findMany({
+    const courses= await prisma.course.findMany({
         where: {
             course_title: {
                 contains: query,
@@ -26,9 +26,9 @@ export async function GridCourses({ query }: GridCoursesProps) {
         //     },
         },
         include: {
+            course_flayer: true,
             Facilitator: true,
             Meeting: true,
-            Flayer: true,
             // course_flayer: true,
             // facilitator: {
             //     include: {
@@ -47,8 +47,7 @@ export async function GridCourses({ query }: GridCoursesProps) {
             {courses.map((course) => (
                 <CardCourse
                     key={course.id}
-                    course={course}
-                    course={course}
+                    course={course as any}
                 />
             ))}
         </div>
