@@ -1,0 +1,72 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Facilitator {
+  id                      String   @id @default(cuid())
+  facilitator_name        String
+  facilitator_role        String
+  facilitator_skills      String
+  facilitator_description String
+  facilitator_image       Image?
+  facilitator_socials     FacilitatorSocials?
+  Course                  Course[]
+  createdAt               DateTime @default(now())
+  updatedAt               DateTime @updatedAt
+}
+
+model Course {
+  id                 String      @id @default(cuid())
+  course_title       String
+  course_description String
+  course_flayer      Flayer?
+  courseFlayerId     String
+  Facilitator        Facilitator @relation(fields: [facilitatorId], references: [id])
+  facilitatorId      String
+  Meeting            Meeting[]     
+  createdAt          DateTime    @default(now())
+  updatedAt          DateTime    @updatedAt
+}
+
+model FacilitatorSocials {
+  id          String           @id @default(cuid())
+  instagram   String
+  facebook    String
+  linkedin    String
+  mail        String
+  Facilitator Facilitator?    @relation(fields: [facilitatorId], references: [id])
+  facilitatorId String        @unique
+}
+
+model Meeting {
+  id       String   @id @default(cuid())
+  url      String
+  datetime DateTime
+  details  String
+  Course   Course   @relation(fields: [courseId], references: [id])
+  courseId String   @unique
+}
+
+model Flayer {
+  id         String @id @default(cuid())
+  public_id  String
+  secure_url String
+  Course     Course @relation(fields: [courseId], references: [id])
+  courseId   String @unique
+}
+
+model Image {
+  id            String       @id @default(cuid())
+  public_id     String
+  secure_url    String
+  Facilitator   Facilitator? @relation(fields: [facilitatorId], references: [id])
+  facilitatorId String       @unique
+}
