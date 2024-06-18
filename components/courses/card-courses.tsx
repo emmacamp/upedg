@@ -22,12 +22,11 @@ import { deleteCourse } from "@/lib/actions";
 import { toast } from "sonner";
 
 interface CardCoursesProps {
-    course: CourseDB;
+    course: Course;
 }
 
 export function CardCourse({ course }: CardCoursesProps) {
-    // console.log({ course });
-    const googleCalendarUrl = `https://www.google.com/calendar/render?action=TEMPLATE&text=${course.course_title}&dates=${course.meeting.datetime}/${course.meeting.datetime}&details=${course.meeting.details}&location=${encodeURIComponent(course.meeting.url)}&sf=true&output=xml`;
+    const googleCalendarUrl = `https://www.google.com/calendar/render?action=TEMPLATE&text=${course.course_title}&dates=${course.Meeting.datetime}/${course.Meeting.datetime}&details=${course.Meeting.details}&location=${encodeURIComponent(course.Meeting.url)}&sf=true&output=xml`;
 
     const handleDelete = async () => {
         const response = await deleteCourse(course.id);
@@ -60,15 +59,15 @@ export function CardCourse({ course }: CardCoursesProps) {
                         <NavigationMenuItem>
                             <NavigationMenuTrigger>Redes</NavigationMenuTrigger>
                             <NavigationMenuContent className="w-[150px] p-2 space-y-2">
-                                <NavigationMenuLink href={course.facilitator.facilitator_socials?.instagram} className="flex space-x-2 hover:bg-gray-100">
+                                <NavigationMenuLink href={course.Facilitator.facilitator_socials?.instagram} className="flex space-x-2 hover:bg-gray-100">
                                     <Instagram />
                                     <p>Instagram</p>
                                 </NavigationMenuLink>
-                                <NavigationMenuLink href={course.facilitator.facilitator_socials?.facebook} className="flex space-x-2 hover:bg-gray-100">
+                                <NavigationMenuLink href={course.Facilitator.facilitator_socials?.instagram} className="flex space-x-2 hover:bg-gray-100">
                                     <Facebook />
                                     <p>Facebook</p>
                                 </NavigationMenuLink>
-                                <NavigationMenuLink href={course.facilitator.facilitator_socials?.linkedin} className="flex space-x-2 hover:bg-gray-100">
+                                <NavigationMenuLink href={course.Facilitator.facilitator_socials?.linkedin} className="flex space-x-2 hover:bg-gray-100">
                                     <Linkedin />
                                     <p>Linkedin</p>
                                 </NavigationMenuLink>

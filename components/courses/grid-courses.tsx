@@ -10,44 +10,52 @@ interface GridCoursesProps {
     query: string;
 }
 
+
+
 export async function GridCourses({ query }: GridCoursesProps) {
-    const courses= await prisma.course.findMany({
+    const courses = await prisma.course.findMany({
         where: {
-            course_title: {
-                contains: query,
-            },
-        //     course_description: {
-        //         contains: query,
-        //     },
-        //     facilitator: {
-        //         facilitator_name: {
-        //             contains: query,
-        //         },
-        //     },
+            // course_title and course_description and facilitator_name search
+            OR: [
+                {
+                    course_title: {
+                        contains: query,
+                    },
+                },
+                {
+                    course_description: {
+                        contains: query,
+                    },
+                },
+                {
+                    Facilitator: {
+                        facilitator_name: {
+                            contains: query,
+                        },
+                    },
+                }
+            ],
         },
         include: {
             course_flayer: true,
-            Facilitator: true,
+            Facilitator: {
+                include: {
+                    facilitator_socials: true,
+                },
+
+            },
             Meeting: true,
-            // course_flayer: true,
-            // facilitator: {
-            //     include: {
-            //         facilitator_socials: true,
-            //         facilitator_image: true,
-            //     },
-            // },
-            // meeting: true,
         },
     });
 
-    console.log({ courses });
+    console.log({ Courses: courses });
 
     return (
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
             {courses.map((course) => (
                 <CardCourse
                     key={course.id}
-                    course={course as any}
+                    course={course as Course}
                 />
             ))}
         </div>

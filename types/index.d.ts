@@ -1,5 +1,46 @@
 // Definición de interfaces basadas en el esquema de Prisma
 
+interface Course {
+  id: string;
+  course_title: string;
+  course_description: string;
+  course_flayer: ImageFile;
+  Facilitator: Facilitator;
+  Meeting: Meeting;
+}
+
+interface Facilitator {
+  id: string;
+  facilitator_name: string;
+  facilitator_role: string;
+  facilitator_skills: string;
+  facilitator_socials: FacilitatorSocials;
+  facilitator_description: string;
+}
+
+interface FacilitatorSocials {
+  id: string;
+  instagram: string;
+  facebook: string;
+  linkedin: string;
+  mail: string;
+  facilitatorId: string;
+  facilitator?: FacilitatorDB;
+}
+
+interface Meeting {
+  id: string;
+  url: string;
+  datetime: Date;
+  details: string;
+}
+
+interface ImageFile {
+  id: string;
+  public_id: string;
+  secure_url: string;
+}
+
 interface FacilitatorDB {
   id: string;
   facilitator_name: string;

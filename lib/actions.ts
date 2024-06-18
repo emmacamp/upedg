@@ -99,37 +99,6 @@ export async function createCourse(formData: FormData): Promise<any> {
         },
       });
 
-      // facilitator: {
-      //   create: {
-      //     facilitator_name,
-      //     facilitator_role,
-      //     facilitator_skills,
-      //     facilitator_description,
-      //     facilitator_image: {
-      //       create: {
-      //         // @ts-ignore
-      //         public_id: facilitatorImageResult.public_id,
-      //         // @ts-ignore
-      //         secure_url: facilitatorImageResult.secure_url,
-      //       },
-      //     },
-      //     facilitator_socials: {
-      //       create: {
-      //         instagram,
-      //         facebook,
-      //         linkedin,
-      //         mail,
-      //       },
-      //     },
-      //   },
-      // },
-      // meeting: {
-      //   create: {
-      //     url,
-      //     datetime: new Date(datetime),
-      //     details,
-      //   },
-      // },
       console.log({ NewCourse: course });
       revalidatePath("/courses");
       return "Course created successfully!";
@@ -147,14 +116,12 @@ export async function deleteCourse(courseId: string) {
     const course = await prisma.course.findUnique({
       where: { id: courseId },
       include: {
-        facilitator: {
+        course_flayer: true,
+        Facilitator: {
           include: {
-            facilitator_socials: true,
             facilitator_image: true,
           },
         },
-        course_flayer: true,
-        meeting: true,
       },
     });
 
@@ -162,36 +129,27 @@ export async function deleteCourse(courseId: string) {
       throw new Error(`Course with ID ${courseId} not found`);
     }
 
-    await prisma.course.delete({ where: { id: courseId } });
+    await prisma.course.delete({ where: { id: courseId }});
 
-    // await prisma.$transaction([
-    //   prisma.course.delete({ where: { id: courseId } }),
-    //   prisma.meeting.delete({ where: { id: course.meetingId } }),
-    //   prisma.facilitatorSocials.delete({
-    //     where: { id: course.facilitator.facilitatorSocialsId },
-    //   }),
-    //   prisma.image.delete({ where: { id: course.courseFlayerId } }),
-    //   prisma.image.delete({
-    //     where: { id: course.facilitator.facilitatorImageId },
-    //   }),
-    //   prisma.facilitator.delete({ where: { id: course.facilitatorId } }),
-    // ]);
-
-    await cloudinary.api
-      .delete_resources(
-        [
-          course.course_flayer.public_id,
-          course.facilitator.facilitator_image.public_id,
-        ],
-        { type: "upload", resource_type: "image" }
-      )
-      .then(console.log);
+    if (course.Facilitator.facilitator_image || course.course_flayer) {
+      await cloudinary.api
+        .delete_resources(
+          [
+            course.Facilitator.facilitator_image?.public_id ?? "",
+            course.course_flayer?.public_id ?? "",
+          ],
+          { type: "upload", resource_type: "image" }
+        )
+        .then(console.log);
+    }
 
     revalidatePath("/courses");
+    
     return {
       success: true,
       message: "Course deleted successfully!",
     };
+
   } catch (error) {
     console.log(error);
     return {
