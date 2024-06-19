@@ -111,7 +111,7 @@ export function Navbar() {
                     paths.map((path) => {
                         return (
                             <Link key={path.name} href={path.href} className={clsx(
-                                'text-lg font-semibold text-secondary',
+                                'text-lg font-semibold',
                                 {
                                     'border-b-2 border-b-primary': pathname === path.href,
                                 },

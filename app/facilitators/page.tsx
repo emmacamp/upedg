@@ -37,7 +37,7 @@ export default function CoursesPage({ searchParams }: SearchParams) {
             </Breadcrumb>
 
             <div className="flex w-full items-center justify-between">
-                <h1 className={`mt-3 text-2xl`}>Cursos</h1>
+                <h1 className={`mt-3 text-2xl`}>Facilitadores</h1>
             </div>
 
             <div className="mt-2 flex items-center justify-between gap-2 md:mt-8">

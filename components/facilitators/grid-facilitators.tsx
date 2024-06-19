@@ -12,6 +12,7 @@ interface GridCoursesProps {
 
 
 export async function GridFacilitator({ query }: GridCoursesProps) {
+    // Number(query);
     const facilitators = await prisma.facilitator.findMany({
         where: {
             facilitator_name: {

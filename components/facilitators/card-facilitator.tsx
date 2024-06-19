@@ -1,5 +1,4 @@
 'use client';
-import { Button } from "@/components/ui/button";
 import {
     Card,
     CardContent,
@@ -24,10 +23,11 @@ interface CardFacilitatorsProps {
 }
 
 export function CardFacilitator({ facilitator }: CardFacilitatorsProps) {
+    console.log({ facilitator });
 
     return (
-        <Card className="max-w-[350px] ">
-            <CardHeader>
+        <Card className="max-w-[350px]">
+            <CardHeader className="space-y-1">
                 <Image
                     src={facilitator.facilitator_image.secure_url}
                     alt="Flayer"
@@ -36,9 +36,24 @@ export function CardFacilitator({ facilitator }: CardFacilitatorsProps) {
                     className="object-cover rounded-lg"
                 />
             </CardHeader>
-            <CardContent>
-                <CardTitle>{facilitator.facilitator_name}</CardTitle>
+            <CardContent className="space-y-2">
+                <div className="space-y-1">
+                    <CardTitle>{facilitator.facilitator_name}</CardTitle>
+                    <a
+                        href={`mailto:${facilitator.facilitator_socials.mail}`}
+                        className="text-sm text-slate-600 hover:text-primary hover:underline"
+                    >
+                        @{facilitator.facilitator_socials.mail.split('@')[0]}
+                    </a>
+                </div>
+
                 <CardDescription>{facilitator.facilitator_description}</CardDescription>
+                <div className="flex flex-wrap gap-2">
+                    {facilitator.facilitator_skills?.split(',').map((skill, index) => (
+                        <span key={index} className="bg-primary/15 text-gray-800 px-2 py-1 rounded-md text-xs">{skill}</span>
+                    ))
+                    }
+                </div>
             </CardContent>
             <CardFooter className="flex justify-between">
                 <NavigationMenu className="border rounded-md">
