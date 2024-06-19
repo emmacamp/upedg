@@ -41,7 +41,7 @@ export function Navbar() {
     ]
 
     return (
-        <nav className="flex justify-between w-full p-4">
+        <nav className="flex justify-between w-full p-4 my-3">
             <Link href="/" className="text-lg font-bold">
                 <Image src={upedglogo} alt="UPEDG" className="px" width={100} height={100} />
             </Link>

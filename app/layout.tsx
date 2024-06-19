@@ -24,7 +24,7 @@ export default function RootLayout({
   return (
     <html lang="es" suppressHydrationWarning>
       <body className={cn(
-        "min-h-screen bg-background font-sans antialiased container mx-auto px-1 sm:px-4 lg:px-16 xl:px-32 2xl:px-64",
+        "min-h-screen bg-background font-sans antialiased container max-w-[1280px] mx-auto px-1 sm:px-4 lg:px-8 xl:px-12 2xl:px-16",
         fontSans.variable
       )}>
         <Navbar />
